@@ -61,7 +61,7 @@ ol.ans li button{border:0;background:var(--soft);color:var(--ink);border-radius:
 <body>
 <div class="wrap">
 <h1>🧩 알고리즘 탐험대</h1>
-<div class="bd2" id="board"><div class="bh"><b>📋 진행 상황판</b><input id="nm" placeholder="이름" aria-label="이름"><span class="bs" id="bs"></span></div><div id="bg"></div><div class="hint" style="margin-top:6px;font-size:13px">✅ 정답 · ❌ 틀린 채로 확인함 · ⏭ 건너뜀 · ⬜ 아직 안 함</div></div>
+<div class="bd2" id="board"><div class="bh"><b>📋 진행 상황판</b><input id="nm" placeholder="이름" aria-label="이름"><span class="bs" id="bs"></span><button class="rsb" id="rsall">↺ 처음부터</button></div><div id="bg"></div><div class="hint" style="margin-top:6px;font-size:13px">✅ 정답 · ❌ 틀린 채로 확인함 · ⬜ 아직 안 함</div></div>
 <div class="tabs" id="tabs"></div>
 <div class="panel" id="main"></div>
 </div>
@@ -77,7 +77,7 @@ ol.ans li{font-size:20px;padding:8px 12px;gap:10px}ol.ans li button{width:50px;h
 pre.code{font-size:20px;padding:14px}.box{padding:16px}.box h3{font-size:21px}.box p.d{font-size:18px}.hint{font-size:18px}.lbl{font-size:19px}
 .shp>div{font-size:17px}.grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.box svg{max-width:480px}
 .bd2{padding:12px 14px}.bn{font-size:16px;min-width:100px}.c{font-size:15px;padding:4px 10px}.bh b{font-size:19px}.bh input{font-size:19px;width:140px;padding:5px 10px}.bh .bs{font-size:19px}.bd2 .hint{font-size:15px!important}
-.wrap{max-width:1180px}
+.wrap{max-width:1180px}.rsb{font:inherit;font-size:15px;border:2px solid var(--line);background:var(--bg);color:var(--sub);border-radius:10px;padding:5px 12px;cursor:pointer;min-height:44px}
 .split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
 .split .side{position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;border:2px solid var(--line);border-radius:16px;padding:12px;background:var(--card)}
 .split .side .box{border:0;padding:0}.split .side .lbl{margin-top:0}.split .side svg{max-width:100%}
@@ -132,14 +132,14 @@ function parse(it){const root=[],st=[{d:-1,l:root}];it.forEach(c=>{while(st.leng
 
 /* ===== 공통 도구 ===== */
 function builder(root,items,ind,on,key){
- let a=(key&&ST[key])||[];const f=id=>items.find(i=>i.id===id),get=()=>a.map(e=>({...f(e.id),d:e.d}));
- function draw(){if(key)ST[key]=a;root.innerHTML=`<div class="lbl">📦 카드 상자 (눌러서 아래로 옮겨요)</div><div class="pool">${items.filter(i=>!a.some(e=>e.id===i.id)).map(i=>`<button class="card" data-a="${i.id}">${i.label}</button>`).join('')||'<span class="hint">카드를 모두 옮겼어요!</span>'}</div><div class="lbl">📝 내 알고리즘 (위에서 아래로 실행돼요)</div><ol class="ans">${a.map((e,k)=>`<li style="margin-left:${e.d*26}px"><span>${f(e.id).label}</span><button data-x="u" data-k="${k}" aria-label="위로">↑</button><button data-x="d" data-k="${k}" aria-label="아래로">↓</button>${ind?`<button data-x="o" data-k="${k}" aria-label="바깥으로">⇤</button><button data-x="i" data-k="${k}" aria-label="안쪽으로">⇥</button>`:''}<button data-x="r" data-k="${k}" aria-label="빼기">✕</button></li>`).join('')}</ol>`;on&&on(get())}
+ let a=((key&&ST[key])||[]).filter(e=>items.some(i=>i.id===e.id));const f=id=>items.find(i=>i.id===id),get=()=>a.map(e=>({...f(e.id),d:e.d}));
+ function draw(){if(key){ST[key]=a;save()}root.innerHTML=`<div class="lbl">📦 카드 상자 (눌러서 아래로 옮겨요)</div><div class="pool">${items.filter(i=>!a.some(e=>e.id===i.id)).map(i=>`<button class="card" data-a="${i.id}">${i.label}</button>`).join('')||'<span class="hint">카드를 모두 옮겼어요!</span>'}</div><div class="lbl">📝 내 알고리즘 (위에서 아래로 실행돼요)</div><ol class="ans">${a.map((e,k)=>`<li style="margin-left:${e.d*26}px"><span>${f(e.id).label}</span><button data-x="u" data-k="${k}" aria-label="위로">↑</button><button data-x="d" data-k="${k}" aria-label="아래로">↓</button>${ind?`<button data-x="o" data-k="${k}" aria-label="바깥으로">⇤</button><button data-x="i" data-k="${k}" aria-label="안쪽으로">⇥</button>`:''}<button data-x="r" data-k="${k}" aria-label="빼기">✕</button></li>`).join('')}</ol>`;on&&on(get())}
  root.onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,k=+d.k;
   if(d.a)a.push({id:d.a,d:0});else if(d.x==='r')a.splice(k,1);else if(d.x==='u'&&k>0)[a[k-1],a[k]]=[a[k],a[k-1]];else if(d.x==='d'&&k<a.length-1)[a[k+1],a[k]]=[a[k],a[k+1]];else if(d.x==='i')a[k].d=Math.min(3,a[k].d+1);else if(d.x==='o')a[k].d=Math.max(0,a[k].d-1);draw()};
  draw();return{get,reset:()=>{a=[];draw()}}}
 function quiz(el,qs,pass){
  el.innerHTML=qs.map((q,i)=>`<p>${i+1}. ${q.t}<select><option value="">▼ 고르기</option>${q.o.map(x=>`<option>${x}</option>`).join('')}</select>${q.u||''}</p>`).join('')+'<button class="btn">확인하기</button><div class="f"></div>';
- const sl0=el.querySelectorAll('select'),qk='q'+K();(ST[qk]||[]).forEach((v,i)=>{if(sl0[i])sl0[i].value=v});sl0.forEach(x=>x.onchange=()=>{ST[qk]=[...sl0].map(y=>y.value)});
+ const sl0=el.querySelectorAll('select'),qk='q'+K();(ST[qk]||[]).forEach((v,i)=>{if(sl0[i])sl0[i].value=v});sl0.forEach(x=>x.onchange=()=>{ST[qk]=[...sl0].map(y=>y.value);save()});
  el.querySelector('button').onclick=()=>{const sl=el.querySelectorAll('select');const r=qs.map((q,i)=>sl[i].value===q.a?[true,`${i+1}번 정답이에요!`]:[false,sl[i].value?`${i+1}번은 다시 생각해 봐요. ${q.h||''}`:`${i+1}번을 아직 안 골랐어요.`]);el.querySelector('.f').innerHTML=fb(r);if(r.every(x=>x[0]))pass()}}
 function chkI(a,exp,msg){const ids=a.map(e=>e.id),ex=exp.map(e=>e[0]),r=[];
  if(ids.some(i=>!ex.includes(i)))r.push([false,'이 알고리즘에 필요 없는 카드가 섞여 있어요.']);
@@ -248,30 +248,35 @@ const P45=(el,pass)=>{const qs=[{t:'‘시작’과 ‘끝’은 ',o:SHP,a:SHP[0
  walk(MY);
  el.innerHTML='<div class="q">📌 <b>③ 순서도로 나타내기</b> 내가 짠 “교실 청소하기” 알고리즘에 알맞은 도형과 화살표를 골라요. 돌아가는 화살표가 있는 점에 주의해요!</div><div id="qz"></div><div id="rs"></div>';
  quiz(el.querySelector('#qz'),qs,()=>{el.querySelector('#rs').innerHTML=`<div class="box" style="margin-top:10px;max-width:500px"><h3>✨ 내가 만든 순서도</h3>${fcOf(MY)}</div>`;pass()})};
-const P46=(el,pass)=>{el.innerHTML=`<div class="q">🎉 내가 짠 “교실 청소하기” 알고리즘을 세 가지 방법으로 모두 나타냈어요! 같은 알고리즘이 표현만 다른 걸 확인해 보세요.</div><div class="grid"><div class="box"><h3>① 자연어</h3>${nl(MY)}</div><div class="box"><h3>② 의사코드</h3>${pcOf(MY,'교실 청소하기')}</div><div class="box"><h3>③ 순서도</h3>${fcOf(MY)}</div></div>`;pass()};
+const P46=(el,pass)=>{el.innerHTML=`<div class="q">🎉 내가 짠 “교실 청소하기” 알고리즘을 세 가지 방법으로 모두 나타냈어요! 같은 알고리즘이 표현만 다른 걸 확인해 보세요.</div><div class="grid"><div class="box"><h3>① 자연어</h3>${nl(MY)}</div><div class="box"><h3>② 의사코드</h3>${pcOf(MY,'교실 청소하기')}</div><div class="box"><h3>③ 순서도</h3>${fcOf(MY)}</div></div>`;if([1,2,3,4].every(j=>dn['3-'+j]))pass();else el.insertAdjacentHTML('beforeend','<div class="fb"><div class="no">🤔 앞의 네 단계(알고리즘 짜기 ~ 순서도로)를 모두 통과하면 이 단계도 ✅가 돼요.</div></div>')};
 
 /* ===== 틀 ===== *//* ===== 틀 ===== */
 const NM=['① 자연어','② 의사코드','③ 순서도','④ 스스로 해보기'],PNS=[['문제 상태 정의','이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['함께 해보기','알고리즘 짜기','자연어로','의사코드로','순서도로','완성']];
 const S=[[P10,P11,P12,P13],[P21,P22,P23],[P31,P32,P33],[P41,P42,P43,P44,P45,P46]];
-let st=0,pg=0;const dn={},sk={},wr={},ST={},K=()=>st+'-'+pg;let showSkip=()=>{};function markFail(){const k=K();delete dn[k];wr[k]=1;nav();showSkip()}
+let st=0,pg=0;const dn={},sk={},wr={},ST={},K=()=>st+'-'+pg;const SKEY='algo-explorer-v1';
+function save(){try{localStorage.setItem(SKEY,JSON.stringify({dn,sk,wr,ST,st,pg,nm:$('#nm').value}))}catch(e){}}
+function load(){try{const j=JSON.parse(localStorage.getItem(SKEY)||'null');if(!j)return;[['dn',dn],['sk',sk],['wr',wr],['ST',ST]].forEach(([k,o])=>Object.assign(o,j[k]||{}));if(j.nm)$('#nm').value=j.nm;if(Number.isInteger(j.st)&&S[j.st]&&Number.isInteger(j.pg)&&S[j.st][j.pg]&&open(j.st,j.pg)){st=j.st;pg=j.pg}}catch(e){}}
+let showSkip=()=>{};function markFail(){const k=K();delete dn[k];wr[k]=1;nav();showSkip()}
 const ok=s=>S[s].every((_,p)=>dn[s+'-'+p]);
 const dd=(s,p)=>dn[s+'-'+p]||sk[s+'-'+p];
-const open=(s,p)=>{for(let i=0;i<s;i++)for(let j=0;j<S[i].length;j++)if(!dd(i,j))return false;for(let j=0;j<p;j++)if(!dd(s,j))return false;return true};
+const open=()=>true;
 function board(){let n=0,k=0,w=0,tot=0;
- $('#bg').innerHTML=S.map((pp,s)=>`<div class="br"><span class="bn">${NM[s]}</span>${pp.map((_,p)=>{tot++;const y=s+'-'+p,d=dn[y],b=!d&&wr[y],x=!d&&!b&&sk[y];if(d)n++;if(b)w++;if(x)k++;return `<span class="c ${d?'ok':b?'bad':x?'sk':''} ${s===st&&p===pg?'cur':''}">${d?'✅':b?'❌':x?'⏭':'⬜'} ${PNS[s][p]}</span>`}).join('')}</div>`).join('');
+ $('#bg').innerHTML=S.map((pp,s)=>`<div class="br"><span class="bn">${NM[s]}</span>${pp.map((_,p)=>{tot++;const y=s+'-'+p,d=dn[y],b=!d&&wr[y],x=0;if(d)n++;if(b)w++;if(x)k++;return `<span class="c ${d?'ok':b?'bad':x?'sk':''} ${s===st&&p===pg?'cur':''}">${d?'✅':b?'❌':x?'⏭':'⬜'} ${PNS[s][p]}</span>`}).join('')}</div>`).join('');
  $('#bs').innerHTML=n===tot?'🎉 모두 통과!':`통과 ${n}/${tot}${w?` · 틀림 ${w}`:''}${k?` · 건너뜀 ${k}`:''}`}
-function nav(){board();$('#tabs').innerHTML=NM.map((n,i)=>`<button class="tab ${i===st?'on':''} ${ok(i)?'done':''}" data-s="${i}" ${open(i,0)?'':'disabled'}>${open(i,0)?'':'🔒 '}${n}</button>`).join('');
+function nav(){board();save();$('#tabs').innerHTML=NM.map((n,i)=>`<button class="tab ${i===st?'on':''} ${ok(i)?'done':''}" data-s="${i}" ${open(i,0)?'':'disabled'}>${open(i,0)?'':'🔒 '}${n}</button>`).join('');
  $('#pn').innerHTML=S[st].length>1?S[st].map((_,p)=>`<button class="${p===pg?'on':''}" data-p="${p}" ${open(st,p)?'':'disabled'}>${open(st,p)?'':'🔒 '}${p+1}. ${PNS[st][p]}${dn[st+'-'+p]?' ✅':''}</button>`).join(''):''}
 function show(){$('#main').innerHTML='<div class="mini" id="pn"></div><div id="pg"></div><div id="nxt"></div>';
  $('#pn').onclick=e=>{const b=e.target.closest('[data-p]');if(b){pg=+b.dataset.p;show()}};
  nav();
  const go=()=>{if(pg<S[st].length-1)pg++;else if(st<S.length-1){st++;pg=0}else return nav();show();scrollTo(0,0)};const key=st+'-'+pg;
- const skb=()=>{$('#nxt').innerHTML='<button class="btn ghost">건너뛰기 ⏭</button>';$('#nxt button').onclick=()=>{if(!dn[key])sk[key]=1;nav();go()}};showSkip=skb;skb();
+ const skb=()=>{$('#nxt').innerHTML=''};showSkip=skb;skb();
  const fin=()=>{dn[key]=1;delete sk[key];delete wr[key];nav();const end=st===3&&pg===S[3].length-1;
-  $('#nxt').innerHTML=end?'<div class="fb"><div class="ok">🎉 마지막 단계까지 마쳤어요! 위 상황판에서 건너뛴(⏭) 단계가 없는지 확인해요.</div></div>':'<button class="btn">다음 ▶</button>';
+  $('#nxt').innerHTML=end?'<div class="fb"><div class="ok">🎉 마지막 단계까지 마쳤어요! 위 상황판에서 ⬜(안 한 단계)나 ❌(틀린 단계)가 없는지 확인해요.</div></div>':'<button class="btn">다음 ▶</button>';
   const nb=$('#nxt button');if(nb)nb.onclick=go};
  S[st][pg]($('#pg'),fin);if(dn[st+'-'+pg])fin()}
 $('#tabs').onclick=e=>{const b=e.target.closest('[data-s]');if(b){st=+b.dataset.s;pg=0;show()}};
+load();$('#nm').oninput=save;
+let rt=0;$('#rsall').onclick=function(){if(!rt){this.textContent='⚠ 정말 지울까요? 한 번 더';rt=setTimeout(()=>{rt=0;this.textContent='↺ 처음부터'},3500)}else{clearTimeout(rt);rt=0;try{localStorage.removeItem(SKEY)}catch(e){}location.reload()}};
 show();
 </script>
 </body>
