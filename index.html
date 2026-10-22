@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>알고리즘 탐험대</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fffaf0;--card:#fff;--ink:#2b2a33;--sub:#6b6a76;--pri:#4f6df5;--pri-ink:#fff;--ok:#1f9d55;--okbg:#e3f6ea;--no:#d6453d;--nobg:#fde8e6;--line:#e2dccb;--soft:#eef1ff;--code:#1f2233;--codeink:#e8ecff;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171d;--card:#22222b;--ink:#f1f0f5;--sub:#a5a4b3;--pri:#7c93ff;--pri-ink:#12131a;--ok:#5fd18b;--okbg:#17352a;--no:#ff857d;--nobg:#3b1f1e;--line:#383846;--soft:#2a2d45;--code:#10111a;--codeink:#e8ecff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17171d;--card:#22222b;--ink:#f1f0f5;--sub:#a5a4b3;--pri:#7c93ff;--pri-ink:#12131a;--ok:#5fd18b;--okbg:#17352a;--no:#ff857d;--nobg:#3b1f1e;--line:#383846;--soft:#2a2d45;--code:#10111a;--codeink:#e8ecff;color-scheme:dark}
+*{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:18px;line-height:1.6}
+.wrap{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:26px;margin:4px 0 12px}
+h2{font-size:21px;margin:0 0 8px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{flex:1 1 150px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px;font:inherit;font-size:16px;cursor:pointer;font-weight:700}
+.tab.on{border-color:var(--pri);background:var(--soft)}
+.tab.done::after{content:" ✅"}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px}
+.q{background:var(--soft);border-radius:12px;padding:10px 14px;margin:8px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.box{border:2px solid var(--line);border-radius:14px;padding:12px;background:var(--card)}
+.box h3{margin:0 0 6px;font-size:17px;color:var(--pri)}
+.box p.d{margin:0 0 8px;font-size:15px;color:var(--sub)}
+pre.code{background:var(--code);color:var(--codeink);border-radius:10px;padding:12px;margin:0;font:16px/1.7 "D2Coding",ui-monospace,Menlo,monospace;white-space:pre-wrap;overflow-x:auto}
+.nl{margin:0;padding-left:22px}
+.box svg{width:100%;height:auto;max-width:320px;display:block;margin:0 auto}
+svg text{font-family:inherit;font-size:13px;fill:var(--ink);text-anchor:middle}
+svg .n{fill:var(--card);stroke:var(--pri);stroke-width:2}
+svg .o{fill:var(--soft);stroke:var(--pri);stroke-width:2}
+svg .dm{fill:#fff6d6;stroke:#d9a400;stroke-width:2}
+@media (prefers-color-scheme:dark){svg .dm{fill:#443a14}}
+svg .ln{stroke:var(--sub);stroke-width:2;fill:none}
+svg .lb{font-size:12px;fill:var(--sub)}
+button.btn{background:var(--pri);color:var(--pri-ink);border:0;border-radius:12px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer;margin:6px 6px 0 0}
+button.btn.ghost{background:var(--soft);color:var(--ink)}
+select{font:inherit;font-size:17px;padding:4px 8px;border-radius:8px;border:2px solid var(--pri);background:var(--card);color:var(--ink)}
+.fb{margin-top:10px;display:grid;gap:6px}
+.fb div{padding:8px 12px;border-radius:10px;font-size:16px}
+.fb .ok{background:var(--okbg);color:var(--ok)}
+.fb .no{background:var(--nobg);color:var(--no)}
+.lbl{font-weight:700;margin:12px 0 6px;font-size:16px;color:var(--sub)}
+.pool{display:flex;flex-wrap:wrap;gap:8px;min-height:48px}
+.card{border:2px dashed var(--pri);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 12px;font:inherit;font-size:16px;cursor:pointer;text-align:left}
+.card:hover{background:var(--soft)}
+ol.ans{list-style:none;margin:0;padding:10px;border:2px solid var(--line);border-radius:12px;min-height:60px;counter-reset:s;background:var(--bg)}
+ol.ans li{counter-increment:s;display:flex;gap:8px;align-items:center;background:var(--card);border:2px solid var(--pri);border-radius:10px;padding:6px 10px;margin:6px 0;font-size:16px}
+ol.ans li::before{content:counter(s);background:var(--pri);color:var(--pri-ink);border-radius:50%;min-width:26px;height:26px;display:grid;place-items:center;font-weight:700;font-size:14px}
+ol.ans li span{flex:1}
+ol.ans li button{border:0;background:var(--soft);color:var(--ink);border-radius:8px;width:34px;height:34px;font-size:16px;cursor:pointer}
+.mini{display:flex;gap:6px;margin:12px 0 6px}
+.mini button{flex:1;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:6px;font:inherit;font-size:15px;cursor:pointer}
+.mini button.on{border-color:var(--pri);background:var(--soft);font-weight:700}
+.trace{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:8px;font-size:16px}
+.hint{font-size:15px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🧩 알고리즘 탐험대</h1>
+<div class="bd2" id="board"><div class="bh"><b>📋 진행 상황판</b><input id="nm" placeholder="이름" aria-label="이름"><span class="bs" id="bs"></span></div><div id="bg"></div><div class="hint" style="margin-top:6px;font-size:13px">✅ 정답 · ❌ 틀린 채로 확인함 · ⏭ 건너뜀 · ⬜ 아직 안 함</div></div>
+<div class="tabs" id="tabs"></div>
+<div class="panel" id="main"></div>
+</div>
+<style>.shp{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}.shp>div{border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center;font-size:14px;line-height:1.4}.shp svg{width:100%;max-width:130px;height:auto}.nl .nl{font-size:15px}.f{margin-top:8px}.tab:disabled,.mini button:disabled{opacity:.45;cursor:not-allowed}.bd2{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:12px}.bh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.bh input{font:inherit;font-size:15px;padding:3px 8px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:110px}.bh .bs{margin-left:auto;font-weight:700;font-size:15px}.br{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}.bn{font-size:13px;font-weight:700;min-width:84px}.c{font-size:12px;border-radius:8px;padding:2px 7px;border:1.5px solid var(--line);background:var(--bg);color:var(--sub)}.c.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}.c.sk{background:#fff3cd;border-color:#d9a400;color:#8a6500}.c.bad{background:var(--nobg);border-color:var(--no);color:var(--no)}.c.cur{outline:2px solid var(--pri)}@media (prefers-color-scheme:dark){.c.sk{background:#4a3d10;color:#ffd666}}</style>
+<script>
+const $=s=>document.querySelector(s);
+const wrap=(t,n)=>{const r=[];for(let i=0;i<t.length;i+=n)r.push(t.slice(i,i+n));return r};
+const txt=(L,x,y,h)=>L.map((l,i)=>`<text x="${x}" y="${y+h/2-(L.length-1)*8+i*16+4}">${l}</text>`).join('');
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const fb=l=>{if(l.some(x=>!x[0]))markFail();return '<div class="fb">'+l.map(([o,m])=>`<div class="${o?'ok':'no'}">${o?'✅':'🤔'} ${m}</div>`).join('')+'</div>'};
+
+const POT=`<div class="box" style="max-width:400px;margin:0 auto 10px"><h3>완성된 반자동 급수 화분 (교과서 93쪽 순서)</h3><svg viewBox='0 0 380 300' role='img' aria-label='반자동 급수 화분 완성 그림'><rect x='120' y='200' width='120' height='82' rx='8' fill='none' stroke='#8a8a99' stroke-width='2.5'/><rect x='122' y='228' width='116' height='52' rx='6' fill='#bfe3ff'/><polygon points='125,105 235,105 197,176 163,176' fill='none' stroke='#8a8a99' stroke-width='2.5'/><polygon points='128,118 232,118 196,172 164,172' fill='#8b5e3c'/><rect x='168' y='176' width='24' height='40' fill='none' stroke='#8a8a99' stroke-width='2.5'/><rect x='161' y='172' width='38' height='8' rx='2' fill='#4aa3df'/><rect x='170' y='180' width='7' height='68' fill='#f0a830'/><rect x='183' y='180' width='7' height='62' fill='#e8962a'/><path d='M180 118V62' stroke='#3b9b4a' stroke-width='4'/><ellipse cx='158' cy='72' rx='20' ry='9' transform='rotate(-30 158 72)' fill='#4cb85c'/><ellipse cx='203' cy='68' rx='20' ry='9' transform='rotate(30 203 68)' fill='#4cb85c'/><ellipse cx='180' cy='52' rx='9' ry='18' fill='#5ccb6c'/><path class='ln' stroke-dasharray='3 3' d='M70 72H150M82 130H135M96 200H166M246 206H240M246 258H238M246 128H244V232H240'/><text class='ts' x='6' y='62'>④ 식물을</text><text class='ts' x='6' y='78'>옮겨 심기</text><text class='ts' x='6' y='122'>③ 배양토를</text><text class='ts' x='6' y='138'>채우기</text><text class='ts' x='6' y='192'>② 천을 끼워</text><text class='ts' x='6' y='208'>입구에 꽂기</text><text class='ts' x='250' y='196'>① 페트병을</text><text class='ts' x='250' y='212'>반으로 자르기</text><text class='ts' x='250' y='250'>⑤ 아래쪽에 물을</text><text class='ts' x='250' y='266'>채우고 올려놓기</text><text class='ts' x='250' y='120'>⑥ 물의 양을</text><text class='ts' x='250' y='136'>주기적으로 확인</text><text class='ts' x='250' y='156'>⑦ 부족하면</text><text class='ts' x='250' y='172'>물 보충하기</text></svg></div>`;
+const rd=(el,pass)=>{el.insertAdjacentHTML('beforeend','<button class="btn" id="rd">다 읽었어요 ✔</button>');el.querySelector('#rd').onclick=pass};
+/* ===== 알고리즘 표현 변환: 노드 → 자연어 / 의사코드 / 순서도 ===== */
+// s: 처리 {x,f} / l: 반복 {x,b} / i: 선택 {q,c,y,n}
+const nl=ns=>'<ol class="nl">'+ns.map(n=>n.t==='s'?`<li>${n.x}</li>`:n.t==='l'?`<li>${n.x}${nl(n.b)}</li>`:`<li>${n.c}${nl(n.y)}${n.n?'그렇지 않으면'+nl(n.n):''}</li>`).join('')+'</ol>';
+const pcl=(ns,d)=>{const p='  '.repeat(d),r=[];ns.forEach(n=>{if(n.t==='s')r.push(p+n.x);else if(n.t==='l')r.push(p+n.x,...pcl(n.b,d+1));else{r.push(p+n.c,...pcl(n.y,d+1));if(n.n)r.push(p+'그렇지 않으면',...pcl(n.n,d+1))}});return r};
+const pcOf=(ns,t)=>'<pre class="code">'+[t,...pcl(ns,1)].join('\n')+'</pre>';
+function fcOf(ns){
+ let o='';const cx=170;
+ const hd=(x,y,d)=>o+=`<path class="ln" d="${d==='r'?`M${x-8} ${y-5}L${x} ${y}L${x-8} ${y+5}`:`M${x-5} ${y-8}L${x} ${y}L${x+5} ${y-8}`}"/>`;
+ const ar=(x,a,b)=>{o+=`<path class="ln" d="M${x} ${a}V${b}"/>`;hd(x,b)};
+ const box=(t,x,y,w)=>{const L=wrap(t,w>150?14:7),h=16*L.length+18;o+=`<rect class="n" x="${x-w/2}" y="${y}" width="${w}" height="${h}" rx="8"/>${txt(L,x,y,h)}`;return h};
+ const oval=(t,y)=>o+=`<rect class="o" x="${cx-50}" y="${y}" width="100" height="34" rx="17"/>${txt([t],cx,y,34)}`;
+ function lay(ns,y,x,w){let b=y;
+  ns.forEach((n,k)=>{
+   if(k){ar(x,b,b+20);b+=20}
+   if(n.t==='s')b+=box(n.f||n.x,x,b,w);
+   else if(n.t==='l'){const t=b;ar(x,b,b+18);const y0=b+18,e=lay(n.b,y0,x,w),f=e+14,ex=x-w/2-1;
+    o+=`<path class="ln" d="M${x} ${e}V${f}H14V${y0+17}H${ex}"/>`;hd(ex,y0+17,'r');
+    o+=`<rect x="2" y="${t}" width="336" height="${f+10-t}" rx="10" fill="none" stroke="var(--pri)" stroke-dasharray="5 4"/><text class="lb" x="30" y="${t+14}">반복</text>`;b=f+10}
+   else{const cy=b+35,yb=cy+22;
+    o+=`<polygon class="dm" points="${x},${b} ${x+95},${cy} ${x},${b+70} ${x-95},${cy}"/>${txt(wrap(n.q,9),x,b,70)}<path class="ln" d="M${x+95} ${cy}H285V${yb}"/>`;hd(285,yb);o+=`<text class="lb" x="${x+108}" y="${cy-6}">예</text>`;
+    const er=lay(n.y,yb,285,96);let el=0;
+    if(n.n){o+=`<path class="ln" d="M${x-95} ${cy}H55V${yb}"/>`;hd(55,yb);o+=`<text class="lb" x="${x-108}" y="${cy-6}">아니오</text>`;el=lay(n.n,yb,55,96)}
+    const m=Math.max(er,el,b+70)+16;o+=`<path class="ln" d="M285 ${er}V${m}H${x}"/>`;
+    o+=n.n?`<path class="ln" d="M55 ${el}V${m}H${x}"/>`:`<path class="ln" d="M${x} ${b+70}V${m}"/><text class="lb" x="${x+26}" y="${b+86}">아니오</text>`;b=m}
+  });return b}
+ oval('시작',8);ar(cx,42,62);let y=lay(ns,62,cx,190);
+ if(ns[ns.length-1].t!=='l'){ar(cx,y,y+20);oval('끝',y+20);y+=54}
+ return `<svg viewBox="0 0 340 ${y+8}" role="img" aria-label="순서도">${o}</svg>`}
+function parse(it){const root=[],st=[{d:-1,l:root}];it.forEach(c=>{while(st.length>1&&st[st.length-1].d>=c.d)st.pop();if(c.k==='e'){const p=st[st.length-1].l,n=p[p.length-1];n.n=[];st.push({d:c.d,l:n.n});return}const n=c.k==='s'?{t:'s',x:c.x}:c.k==='l'?{t:'l',x:c.x,b:[]}:{t:'i',q:c.q,c:c.x,y:[]};st[st.length-1].l.push(n);if(c.k!=='s')st.push({d:c.d,l:n.b||n.y})});return root}
+
+/* ===== 공통 도구 ===== */
+function builder(root,items,ind,on,key){
+ let a=(key&&ST[key])||[];const f=id=>items.find(i=>i.id===id),get=()=>a.map(e=>({...f(e.id),d:e.d}));
+ function draw(){if(key)ST[key]=a;root.innerHTML=`<div class="lbl">📦 카드 상자 (눌러서 아래로 옮겨요)</div><div class="pool">${items.filter(i=>!a.some(e=>e.id===i.id)).map(i=>`<button class="card" data-a="${i.id}">${i.label}</button>`).join('')||'<span class="hint">카드를 모두 옮겼어요!</span>'}</div><div class="lbl">📝 내 알고리즘 (위에서 아래로 실행돼요)</div><ol class="ans">${a.map((e,k)=>`<li style="margin-left:${e.d*26}px"><span>${f(e.id).label}</span><button data-x="u" data-k="${k}" aria-label="위로">↑</button><button data-x="d" data-k="${k}" aria-label="아래로">↓</button>${ind?`<button data-x="o" data-k="${k}" aria-label="바깥으로">⇤</button><button data-x="i" data-k="${k}" aria-label="안쪽으로">⇥</button>`:''}<button data-x="r" data-k="${k}" aria-label="빼기">✕</button></li>`).join('')}</ol>`;on&&on(get())}
+ root.onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,k=+d.k;
+  if(d.a)a.push({id:d.a,d:0});else if(d.x==='r')a.splice(k,1);else if(d.x==='u'&&k>0)[a[k-1],a[k]]=[a[k],a[k-1]];else if(d.x==='d'&&k<a.length-1)[a[k+1],a[k]]=[a[k],a[k+1]];else if(d.x==='i')a[k].d=Math.min(3,a[k].d+1);else if(d.x==='o')a[k].d=Math.max(0,a[k].d-1);draw()};
+ draw();return{get,reset:()=>{a=[];draw()}}}
+function quiz(el,qs,pass){
+ el.innerHTML=qs.map((q,i)=>`<p>${i+1}. ${q.t}<select><option value="">▼ 고르기</option>${q.o.map(x=>`<option>${x}</option>`).join('')}</select>${q.u||''}</p>`).join('')+'<button class="btn">확인하기</button><div class="f"></div>';
+ const sl0=el.querySelectorAll('select'),qk='q'+K();(ST[qk]||[]).forEach((v,i)=>{if(sl0[i])sl0[i].value=v});sl0.forEach(x=>x.onchange=()=>{ST[qk]=[...sl0].map(y=>y.value)});
+ el.querySelector('button').onclick=()=>{const sl=el.querySelectorAll('select');const r=qs.map((q,i)=>sl[i].value===q.a?[true,`${i+1}번 정답이에요!`]:[false,sl[i].value?`${i+1}번은 다시 생각해 봐요. ${q.h||''}`:`${i+1}번을 아직 안 골랐어요.`]);el.querySelector('.f').innerHTML=fb(r);if(r.every(x=>x[0]))pass()}}
+function chkI(a,exp,msg){const ids=a.map(e=>e.id),ex=exp.map(e=>e[0]),r=[];
+ if(ids.some(i=>!ex.includes(i)))r.push([false,'이 알고리즘에 필요 없는 카드가 섞여 있어요.']);
+ const miss=ex.filter(i=>!ids.includes(i)).length;if(miss)r.push([false,`카드가 ${miss}장 빠졌어요.`]);
+ const o=a.filter(e=>ex.includes(e.id)),oo=!miss&&o.map(e=>e.id).join()===ex.join();
+ if(!miss)r.push([oo,oo?'실행 순서가 알맞아요.':'순서를 다시 생각해 보세요. 확인하고, 판단하고, 필요한 일을 해요.']);
+ const io=oo&&exp.every((e,i)=>o[i].d===e[1]);
+ if(oo)r.push([io,io?'들여쓰기도 알맞아요!':(msg||'⇥ ⇤ 버튼으로 들여쓰기를 고쳐 보세요. 반복할 일은 한 칸, 조건이 맞을 때만 하는 일은 두 칸 안쪽이에요.')]);
+ return r}
+
+/* ===== 교과서 데이터 ===== */
+const HUBX=['페트병 반으로 자르기','페트병 입구에 천 끼우기','위쪽 페트병에 배양토 담기','식물을 페트병 화분에 옮겨 심기','아래쪽 페트병에 물 채우기','위쪽 페트병 화분을 물통 위에 올려놓기'];
+const HUB=HUBX.map(x=>({t:'s',x}));
+const WATER=[{t:'l',x:'다음과 같은 작업을 계속 반복하기',b:[{t:'s',x:'물통에 남아 있는 물의 양을 확인하기',f:'물의 양 확인하기'},{t:'i',q:'물이 부족한가?',c:'물통의 물이 부족하다면',y:[{t:'s',x:'물통에 물을 보충하기',f:'물 보충하기'}]},{t:'s',x:'일정 시간 기다리기'}]}];
+const STR=`<div class="grid"><div class="box"><h3>순차 (순서대로 실행)</h3><p class="d" style="margin:0">정해진 순서대로 처음부터 끝까지 차례로 해요.</p></div><div class="box"><h3>반복 (반복해서 실행)</h3><p class="d" style="margin:0">주어진 조건을 만족할 때까지 같은 명령을 되풀이해요.</p></div><div class="box"><h3>선택 (필요하면 실행)</h3><p class="d" style="margin:0">조건을 만족하는지에 따라 다르게 실행해요.</p></div></div>`;
+const shk=(key,arr)=>{const o=ST[key+'#s'];if(o&&o.length===arr.length&&o.every(id=>arr.some(i=>i.id===id)))return o.map(id=>arr.find(i=>i.id===id));const r=shuf(arr);ST[key+'#s']=r.map(i=>i.id);return r};
+const RULE=`<div class="q">📏 <b>들여쓰기 규칙</b> (⇥ 안쪽으로 · ⇤ 바깥쪽으로)<br>• “반복하기” 줄은 맨 왼쪽 (0칸)<br>• 반복할 일은 <b>한 칸</b> 안쪽 (⇥ 한 번)<br>• “~라면(조건)” 줄 아래에서 조건이 맞을 때만 하는 일은 <b>한 칸 더</b> 안쪽 (⇥ 두 번)<br>• 조건이 끝나고 이어서 반복할 일은 다시 한 칸으로 돌아와요<pre class="code" style="margin-top:6px">계속 반복하기     ← 0칸\n  일 A            ← 1칸\n  조건이면        ← 1칸\n    일 B          ← 2칸\n  일 C            ← 1칸</pre></div>`;
+const RULE4=`<div class="q">📏 <b>들여쓰기 규칙</b> (⇥ 안쪽으로 · ⇤ 바깥쪽으로)<br>• 순서대로 하는 일은 모두 <b>맨 왼쪽 (0칸)</b><br>• “~이면” 줄 아래에서 그 조건일 때만 하는 일은 <b>한 칸</b> 안쪽 (⇥ 한 번)<br>• “그렇지 않으면” 줄은 “~이면”과 <b>같은 줄 (0칸)</b>, 그 아래 일은 <b>한 칸</b> 안쪽<br>• 조건이 끝나고 이어지는 일은 다시 맨 왼쪽<pre class="code" style="margin-top:6px">일 A              ← 0칸\n조건이면          ← 0칸\n  일 B            ← 1칸\n그렇지 않으면     ← 0칸\n  일 C            ← 1칸\n일 D              ← 0칸</pre></div>`;
+const WC=(id,k,x,q)=>({id,k,x,q,label:(k==='i'?'🔀 ':k==='l'?'🔁 ':'')+x});
+const WCARDS=[WC('l','l','다음과 같은 작업을 계속 반복하기'),WC('a','s','물통에 남아 있는 물의 양을 확인하기'),WC('c','i','물통의 물이 부족하다면','물이 부족한가?'),WC('d','s','물통에 물을 보충하기'),WC('e','s','일정 시간 기다리기'),WC('x','s','물통을 비우기')];
+const LCARDS=[WC('l','l','계속 반복하기'),WC('a','s','교실 밝기 확인하기'),WC('c','i','교실이 어두우면','교실이 어두운가?'),WC('d','s','불 켜기'),WC('e','s','1분 기다리기'),WC('x','s','교실 문을 잠그기')];
+const EXP=[['l',0],['a',1],['c',1],['d',2],['e',1]];
+const SH=[['시작과 끝','<rect class="o" x="10" y="8" width="100" height="34" rx="17"/>','순서도의 시작과 끝'],['실행','<rect class="n" x="10" y="8" width="100" height="34" rx="6"/>','하는 일'],['판단','<polygon class="dm" points="60,2 112,25 60,48 8,25"/>','조건이 참이면 “예”, 거짓이면 “아니오”'],['흐름선','<path class="ln" d="M60 4V40"/><path class="ln" d="M54 32L60 42L66 32"/>','일의 순서나 흐름']];
+
+/* ===== ① 자연어 ===== */
+const P10=(el,pass)=>{el.innerHTML=`<div class="q">📌 문제를 해결하려면 먼저 <b>문제의 상태</b>를 정의해야 해요. <b>현재 상태</b>는 문제가 해결되지 않은 지금의 상태, <b>목표 상태</b>는 문제를 해결한 뒤의 최종 결과예요.</div><div class="box"><h3>해결할 문제</h3><p class="d" style="margin:0 0 8px">방울토마토에 물을 자주 주지 않아도 잘 자라게 하려면 어떻게 해야 할까?</p><div class="grid"><div class="box"><h3>현재 상태</h3>물을 주 2~3회 주고 있어요.</div><div class="box"><h3>목표 상태</h3>물을 2주에 한 번쯤 주어도 잘 자라요.</div></div><p class="d" style="margin:8px 0 0"><b>문제 해결 방법</b> 반자동 급수 장치를 만들어 물 주는 횟수를 줄여요.</p></div><div class="q" style="margin-top:12px">💡 <b>알고리즘</b>은 현재 상태를 목표 상태로 바꾸는 데 필요한 작업을 <b>순서대로 설명하거나 구조화한 것</b>이에요. 자연어, 의사코드, 순서도로 나타낼 수 있어요.</div><div id="qz"></div>`;
+ quiz(el.querySelector('#qz'),[{t:'“물을 주 2~3회 주고 있는 상태”는 ',o:['현재 상태','목표 상태'],a:'현재 상태'},{t:'“물을 2주에 한 번쯤 주어도 잘 자라는 상태”는 ',o:['현재 상태','목표 상태'],a:'목표 상태'},{t:'문제를 해결한 뒤의 최종 결과는 ',o:['현재 상태','목표 상태'],a:'목표 상태'},{t:'현재 상태를 목표 상태로 바꾸는 작업을 순서대로 나타낸 것은 ',o:['알고리즘','컴퓨터','그림'],a:'알고리즘'}],pass)};
+const P11=(el,pass)=>{el.innerHTML=`<div class="q">📌 <b>자연어</b>는 우리가 평소에 쓰는 말이에요. 알고리즘을 <b>순서대로 한 줄씩</b> 써서 나타낼 수 있어요.</div><div class="box"><h3>예시: 반자동 급수 화분 만들기</h3>${POT}${nl(HUB)}</div><div class="grid" style="margin-top:12px"><div class="box"><h3>👍 좋은 점</h3><p class="d" style="margin:0">누구나 쉽게 읽고 이해할 수 있어요.</p></div><div class="box"><h3>⚠️ 조심할 점</h3><p class="d" style="margin:0">사람마다 다르게 이해할 수 있어서, <b>구체적인 행동</b>으로 써야 해요.</p></div></div><div class="q" style="margin-top:12px">❌ “페트병을 손질한다” → 어떻게? 사람마다 달라요.<br>✅ “페트병 반으로 자르기” → 누가 해도 같은 행동!</div>`;rd(el,pass)};
+const P12=(el,pass)=>{el.innerHTML='<div id="pt"></div><div id="qz"></div>';el.querySelector('#pt').innerHTML=POT;quiz(el.querySelector('#qz'),[{t:'페트병 ',o:['반으로','열 조각으로','한 조각으로'],a:'반으로',u:' 자르기'},{t:'위쪽 페트병에 ',o:['물','배양토','모래'],a:'배양토',u:' 담기'},{t:'식물을 페트병 화분에 ',o:['옮겨 심기','던지기','말리기'],a:'옮겨 심기'},{t:'자연어로 알고리즘을 쓸 때 가장 중요한 것은 ',o:['예쁜 그림','실행 순서','긴 문장'],a:'실행 순서',u:'예요.'}],pass)};
+const P13=(el,pass)=>{el.innerHTML='<div class="q">📌 “반자동 급수 화분 만들기” 카드를 순서대로 놓아 보세요.</div>'+POT+'<div id="bd"></div><button class="btn" id="ck">확인하기</button><button class="btn ghost" id="rs">처음부터</button><div id="fb"></div>';
+ const q=s=>el.querySelector(s),b=builder(q('#bd'),shk(K(),HUBX.map((x,i)=>({id:'h'+i,label:x,i}))),0,null,K());
+ q('#rs').onclick=()=>{b.reset();q('#fb').innerHTML=''};
+ q('#ck').onclick=()=>{const a=b.get();if(a.length<6)return q('#fb').innerHTML=fb([[false,`카드를 6장 모두 놓아 주세요. (지금 ${a.length}장)`]]);
+  const g=a.filter((c,i)=>c.i===i).length;
+  if(g===6){q('#fb').innerHTML=fb([[true,'완벽해요! 자연어 알고리즘 완성!']])+`<div class="box" style="margin-top:8px">${nl(HUB)}</div>`;pass()}
+  else q('#fb').innerHTML=fb([[false,`${g}장이 제자리에 있어요. 앞의 일이 끝나야 다음 일을 할 수 있는지 생각해 보세요.`]])}};
+
+/* ===== ② 의사코드 ===== */
+const P21=(el,pass)=>{el.innerHTML=`<div class="q">📌 <b>의사코드</b>는 자연어를 프로그래밍 언어와 비슷한 형식으로 쓴 거예요. 프로그래밍 언어를 몰라도 쓸 수 있고, 알고리즘을 분명하게 이해하는 데 도움이 돼요.</div><div class="grid"><div class="box"><h3>순차 구조 예시</h3>${pcOf(HUB,'반자동 급수 화분 만들기')}</div><div class="box"><h3>반복 + 선택 구조 예시</h3>${pcOf(WATER,'물 관리하기')}</div></div><div class="q" style="margin-top:12px">🔎 <b>들여쓰기</b>(한 칸 안쪽)는 “이 일은 위 줄에 속해요”라는 뜻이에요.<br>• “계속 반복하기” 아래에 들어간 일 → 반복할 일<br>• “~라면” 아래에 들어간 일 → 조건이 맞을 때만 하는 일</div>${STR}`;rd(el,pass)};
+const P22=(el,pass)=>{el.innerHTML=`<div class="box" style="margin-bottom:10px"><h3>물 관리하기</h3>${pcOf(WATER,'물 관리하기')}</div><div id="qz"></div>`;
+ quiz(el.querySelector('#qz'),[{t:'같은 작업을 계속 되풀이하는 구조의 이름은? ',o:['순차','반복','선택'],a:'반복'},{t:'“물통의 물이 부족하다면”처럼 조건에 따라 실행 여부가 달라지는 구조는? ',o:['순차','반복','선택'],a:'선택'},{t:'위에서 아래로 차례대로 실행하는 구조는? ',o:['순차','반복','선택'],a:'순차'},{t:'“물통에 물을 보충하기”가 안쪽에 들여쓰기 된 까닭은? ',o:['물이 부족할 때만 실행하기 때문','예쁘게 보이려고','가장 마지막에 하기 때문'],a:'물이 부족할 때만 실행하기 때문',h:'조건(~라면) 아래에 있어요.'},{t:'“다음과 같은 작업을 계속 ',o:['반복하기','끝내기','던지기'],a:'반복하기',u:'”'}],pass)};
+function indPage(el,pass,cfg){el.innerHTML=`<div class="q">📌 문제: <b>“${cfg.title}”</b> 알고리즘을 ${cfg.kind}(으)로 완성해요. 카드를 순서대로 놓고 ⇥ ⇤ 버튼으로 <b>들여쓰기</b>를 맞춰요.${cfg.exp?'':' 필요 없는 카드도 있어요!'}</div>${cfg.rule||RULE}<div id="bd"></div><button class="btn" id="ck">확인하기</button><button class="btn ghost" id="rs">처음부터</button><div id="fb"></div><div id="lv"></div>`;
+ const q=s=>el.querySelector(s),b=builder(q('#bd'),shk(K(),cfg.cards),1,a=>{q('#lv').innerHTML=a.length?`<div class="lbl">✨ 내가 만든 ${cfg.kind}</div>${cfg.view(parse(a))}`:'';q('#fb').innerHTML=''},K());
+ q('#rs').onclick=()=>b.reset();
+ q('#ck').onclick=()=>{const r=chkI(b.get(),cfg.exp||EXP,cfg.imsg);q('#fb').innerHTML=fb(r);if(r.every(x=>x[0]))pass()}}
+const P23=(el,pass)=>indPage(el,pass,{title:'물 관리하기',kind:'의사코드',cards:WCARDS,view:n=>pcOf(n,'물 관리하기')});
+
+/* ===== ③ 순서도 ===== */
+const P31=(el,pass)=>{el.innerHTML=`<div class="q">📌 <b>순서도</b>는 약속된 기호로 알고리즘을 나타내요. 문제 해결 과정의 흐름을 한눈에 볼 수 있어서 <b>오류를 쉽게 찾고 고칠 수 있어요.</b></div><div class="lbl">순서도에 쓰는 도형</div><div class="shp">${SH.map(s=>`<div><svg viewBox="0 0 120 50">${s[1]}</svg><b>${s[0]}</b><br>${s[2]}</div>`).join('')}</div><div class="grid"><div class="box"><h3>반자동 급수 화분 만들기</h3>${fcOf(HUB)}<p class="d" style="margin:6px 0 0"><b>순차</b>: 정해진 순서대로 끝까지 실행해요.</p></div><div class="box"><h3>물 관리하기</h3>${fcOf(WATER)}<p class="d" style="margin:6px 0 0"><b>반복</b>: 점선 안을 되풀이해요 (이 순서도는 ‘끝’이 없어요).<br><b>선택</b>: 마름모에서 “예”일 때만 물을 보충해요.</p></div></div>`;rd(el,pass)};
+const P32=(el,pass)=>{el.innerHTML=`<div class="box" style="max-width:360px;margin:0 auto 10px"><h3>물 관리하기 순서도</h3>${fcOf(WATER)}</div><div id="qz"></div>`;
+ const T=['직사각형(실행)','마름모(판단)','화살표(흐름선)'];
+ quiz(el.querySelector('#qz'),[{t:'‘시작’과 ‘끝’을 나타내는 도형은? ',o:['둥근 네모','직사각형','마름모'],a:'둥근 네모'},{t:'‘물 보충하기’처럼 하는 일을 나타내는 도형은? ',o:T,a:T[0]},{t:'‘물이 부족한가?’처럼 조건을 따지는 도형은? ',o:T,a:T[1]},{t:'마름모에서 조건이 참이면 ',o:['예','아니오'],a:'예',u:' 쪽으로 가요.'},{t:'일의 순서나 흐름을 나타내는 것은? ',o:T,a:T[2]},{t:'점선 안의 일을 되풀이하는 구조는? ',o:['순차','반복','선택'],a:'반복'}],pass)};
+const P33=(el,pass)=>indPage(el,pass,{title:'교실 불 자동으로 켜기',kind:'순서도',cards:LCARDS,view:fcOf});
+
+/* ===== ④ 스스로 해보기: 횡단보도 ===== */
+const SN=x=>({t:'s',x});
+const B4=[{id:'a',label:'횡단보도 앞에 선다',node:SN('횡단보도 앞에 선다')},{id:'b',label:'신호등 색을 확인한다',node:SN('신호등 색을 확인한다')},
+{id:'c',label:'🔀 초록불인가? 예→좌우를 살피고 건넌다 / 아니오→초록불이 될 때까지 기다린다',node:{t:'i',q:'초록불인가?',c:'초록불이면',y:[SN('좌우를 살피고 건넌다')],n:[SN('초록불이 될 때까지 기다린다')]}},
+{id:'o',label:'손을 번쩍 든다 (선택)',node:SN('손을 번쩍 든다')},{id:'x1',label:'빨간불에 뛰어서 건넌다',node:SN('빨간불에 뛰어서 건넌다')},{id:'x2',label:'휴대폰을 보며 건넌다',node:SN('휴대폰을 보며 건넌다')},{id:'x3',label:'눈을 감고 걷는다',node:SN('눈을 감고 걷는다')}];
+const P41=(el,pass)=>{el.innerHTML='<div class="q">📌 <b>스스로 해보기</b> “안전하게 횡단보도를 건너는 알고리즘”을 만들어요. 필요한 카드만 골라 순서를 정하면 <b>자연어·의사코드·순서도</b>로 바뀌어요. 안전하지 않은 카드는 쓰면 안 돼요!</div><div id="bd"></div><button class="btn" id="ck">검사하기</button><button class="btn ghost" id="rs">처음부터</button><div id="fb"></div><div id="lv"></div>';
+ const q=s=>el.querySelector(s);let vw=0,cur=[];
+ const live=a=>{cur=a;const ns=a.map(c=>c.node);q('#lv').innerHTML=ns.length?`<div class="lbl">✨ 내 알고리즘이 이렇게 바뀌어요</div><div class="mini">${['① 자연어','② 의사코드','③ 순서도'].map((t,i)=>`<button data-v="${i}" class="${i===vw?'on':''}">${t}</button>`).join('')}</div><div class="box">${[nl,n=>pcOf(n,'횡단보도 건너기'),fcOf][vw](ns)}</div>`:'';q('#lv').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{vw=+b.dataset.v;live(cur)})};
+ const bd=builder(q('#bd'),shk(K(),B4),0,a=>{live(a);q('#fb').innerHTML=''},K());
+ q('#rs').onclick=()=>bd.reset();
+ q('#ck').onclick=()=>{const ids=bd.get().map(x=>x.id),p=k=>ids.indexOf(k),r=[],N={a:'멈춰 서는 일',b:'신호등을 확인하는 일',c:'초록불인지 판단하는 일(🔀)'};
+  ['a','b','c'].forEach(k=>r.push([ids.includes(k),ids.includes(k)?`${N[k]} 카드를 골랐어요.`:`꼭 필요한 카드가 빠졌어요: ${N[k]}`]));
+  const bad=ids.some(i=>i[0]==='x');r.push([!bad,bad?'안전하지 않은 행동 카드가 있어요. 빼 주세요.':'안전한 행동만 골랐어요.']);
+  if(p('a')>=0&&p('b')>=0)r.push([p('a')<p('b'),p('a')<p('b')?'멈춘 뒤에 신호를 확인했어요.':'먼저 멈춰 선 다음 신호를 확인해야 해요.']);
+  if(p('b')>=0&&p('c')>=0)r.push([p('b')<p('c'),p('b')<p('c')?'신호를 확인한 뒤에 판단했어요.':'신호를 확인해야 초록불인지 판단할 수 있어요.']);
+  if(p('o')>=0&&p('a')>=0)r.push([p('a')<p('o'),p('a')<p('o')?'손 드는 위치도 좋아요.':'손은 멈춰 선 다음에 드는 게 자연스러워요.']);
+  if(p('c')>=0)r.push([p('c')===ids.length-1,p('c')===ids.length-1?'판단이 마지막에 있어요.':'판단(🔀) 뒤에는 건너거나 기다리는 일이 이미 들어 있으니 가장 마지막에 놓아 보세요.']);
+  q('#fb').innerHTML=fb(r);if(r.every(x=>x[0])){q('#fb').innerHTML+='<div class="fb"><div class="ok">🎉 성공! 규칙에 맞으면 카드 배치가 조금 달라도 모두 정답이에요.</div></div>';pass()}}};
+
+let MY=null;
+const B5=[{id:'a',label:'쓰레기를 줍는다',node:SN('쓰레기를 줍는다'),v:'쓰레기를 정리한다'},{id:'o',label:'쓰레기통 앞으로 걸어간다',node:SN('쓰레기통 앞으로 걸어간다'),v:'쓰레기통을 생각한다'},
+{id:'c',label:'🔀 재활용할 수 있는가? 예→재활용 통에 넣는다 / 아니오→일반 쓰레기통에 넣는다',node:{t:'i',q:'재활용할 수 있는가?',c:'재활용할 수 있으면',y:[SN('재활용 통에 넣는다')],n:[SN('일반 쓰레기통에 넣는다')]},v:'쓰레기를 알맞게 버린다'},
+{id:'h1',label:'화장실에 간다',node:SN('화장실에 간다'),v:'손 씻을 곳으로 간다'},{id:'h2',label:'수도꼭지를 튼다',node:SN('수도꼭지를 튼다'),v:'물을 준비한다'},{id:'h3',label:'비누로 손을 씻는다',node:SN('비누로 손을 씻는다'),v:'깨끗하게 한다'},
+{id:'x1',label:'쓰레기를 창밖으로 던진다',node:SN('쓰레기를 창밖으로 던진다')},{id:'x2',label:'쓰레기를 바닥에 두고 간다',node:SN('쓰레기를 바닥에 두고 간다')}];
+let MYK=null;
+const ensureMY=()=>{if(!MY){MY=['a','o','c','h1','h2','h3'].map(id=>B5.find(c=>c.id===id).node);MYK='a,o,c,h1,h2,h3'}};
+const clr=(s,p)=>{const k=s+'-'+p;delete dn[k];delete sk[k];delete wr[k];Object.keys(ST).forEach(x=>{if(x===k||x.startsWith(k+'#')||x==='q'+k)delete ST[x]})};
+const flat=ns=>{let n=0;const r=[],m=(k,x,d,q,l)=>r.push({id:'p'+n++,k,x,q,d,label:l||x});ns.forEach(x=>{if(x.t==='s')m('s',x.x,0);else{m('i',x.c,0,x.q,'🔀 '+x.c);x.y.forEach(s=>m('s',s.x,1));if(x.n){m('e','그렇지 않으면',0,0,'↔ 그렇지 않으면');x.n.forEach(s=>m('s',s.x,1))}}});return r};
+const P42=(el,pass)=>{el.innerHTML=`<div class="q">📌 <b>문제 상태 정의</b><br>• 현재 상태: 교실 바닥에 쓰레기가 떨어져 있어요.<br>• 목표 상태: 쓰레기가 알맞은 곳에 버려지고, 화장실에서 손을 씻어 내 손이 깨끗해요.<br>이렇게 바꾸는 <b>알고리즘</b>을 카드로 짜 보세요. 바르지 못한 행동 카드는 쓰면 안 돼요!</div><div id="bd"></div><button class="btn" id="ck">검사하기</button><button class="btn ghost" id="rs">처음부터</button><div id="fb"></div>`;
+ const q=s=>el.querySelector(s),bd=builder(q('#bd'),shk(K(),B5),0,()=>{q('#fb').innerHTML=''},K());
+ q('#rs').onclick=()=>bd.reset();
+ q('#ck').onclick=()=>{const a=bd.get(),ids=a.map(x=>x.id),p=k=>ids.indexOf(k),r=[],N={a:'쓰레기를 줍는 일',o:'쓰레기통 앞으로 걸어가는 일',c:'재활용인지 판단하는 일(🔀)',h1:'화장실에 가는 일',h2:'수도꼭지를 트는 일',h3:'비누로 손을 씻는 일'};
+  Object.keys(N).forEach(k=>r.push([ids.includes(k),ids.includes(k)?`${N[k]} 카드를 골랐어요.`:`꼭 필요한 카드가 빠졌어요: ${N[k]}`]));
+  const bad=ids.some(i=>i[0]==='x');r.push([!bad,bad?'바르지 못한 행동 카드가 있어요. 빼 주세요.':'올바른 행동만 골랐어요.']);
+  const ord=(x,y,o,n)=>{if(p(x)>=0&&p(y)>=0)r.push([p(x)<p(y),p(x)<p(y)?o:n])};
+  ord('a','o','줍고 나서 쓰레기통 앞으로 갔어요.','먼저 쓰레기를 주워야 쓰레기통으로 갈 수 있어요.');ord('o','c','쓰레기통 앞에서 판단했어요.','쓰레기통 앞에 가서 재활용인지 판단해요.');
+  ord('c','h1','쓰레기를 버린 뒤에 화장실로 갔어요.','쓰레기를 버린 뒤에 손을 씻으러 가요.');
+  ord('h1','h2','화장실에 간 뒤 수도꼭지를 틀었어요.','화장실에 가야 수도꼭지를 틀 수 있어요.');
+  ord('h2','h3','수도꼭지를 튼 뒤 손을 씻었어요.','물이 나와야 비누로 손을 씻을 수 있어요.');
+  
+  q('#fb').innerHTML=fb(r);
+  if(r.every(x=>x[0])){const nk=ids.join();if(nk!==MYK){for(let j=2;j<6;j++)clr(3,j);MYK=nk}MY=a.map(x=>x.node);q('#fb').innerHTML+=fb([[true,'알고리즘 설계 성공! 이제 이 알고리즘을 세 가지 방법으로 나타내 봐요.']]);pass()}}};
+const P43=(el,pass)=>{ensureMY();const qs=MY.map((n,i)=>{const b=B5.find(c=>c.node===n),good=n.t==='i'?`${n.c} ${n.y[0].x}, 아니면 ${n.n[0].x}`:n.x;return{t:`${i+1}번째 일을 자연어로 쓰면? `,o:shuf([good,b.v]),a:good,h:'누가 해도 같은 행동이 되는 구체적인 문장을 골라요.'}});
+ el.innerHTML='<div class="q">📌 <b>① 자연어로 나타내기</b> 내가 짠 알고리즘을 말로 나타내요. 각 일마다 <b>구체적이고 명확한 문장</b>을 골라요.</div><div id="qz"></div><div id="rs"></div>';
+ quiz(el.querySelector('#qz'),qs,()=>{el.querySelector('#rs').innerHTML=`<div class="box" style="margin-top:10px"><h3>✨ 내가 만든 자연어 알고리즘</h3>${nl(MY)}</div>`;pass()})};
+const P44=(el,pass)=>{ensureMY();const cards=flat(MY);indPage(el,pass,{rule:RULE4,imsg:'⇥ ⇤ 버튼으로 고쳐 보세요. “~이면”과 “그렇지 않으면”은 맨 왼쪽, 그 아래 일은 한 칸 안쪽이에요.',title:'내가 짠 쓰레기 분리배출',kind:'의사코드',cards,exp:cards.map(c=>[c.id,c.d]),view:n=>pcOf(n,'쓰레기 분리배출하기')})};
+const SHP=['둥근 네모(시작과 끝)','직사각형(실행)','마름모(판단)'];
+const P45=(el,pass)=>{ensureMY();const qs=[{t:'‘시작’과 ‘끝’은 ',o:SHP,a:SHP[0],u:' 도형으로 그려요.'}];
+ MY.forEach(n=>{if(n.t==='s')qs.push({t:`‘${n.x}’는 `,o:SHP,a:SHP[1],u:' 도형으로 그려요.'});else qs.push({t:`‘${n.q}’처럼 조건을 따지는 곳은 `,o:SHP,a:SHP[2],u:' 도형으로 그려요.'},{t:`마름모에서 ‘${n.y[0].x}’(으)로 가는 화살표에는 `,o:['예','아니오'],a:'예',u:' 라고 써요.'},{t:`마름모에서 ‘${n.n[0].x}’(으)로 가는 화살표에는 `,o:['예','아니오'],a:'아니오',u:' 라고 써요.'})});
+ el.innerHTML='<div class="q">📌 <b>③ 순서도로 나타내기</b> 내가 짠 알고리즘에 알맞은 도형과 화살표 글자를 골라요.</div><div id="qz"></div><div id="rs"></div>';
+ quiz(el.querySelector('#qz'),qs,()=>{el.querySelector('#rs').innerHTML=`<div class="box" style="margin-top:10px;max-width:380px"><h3>✨ 내가 만든 순서도</h3>${fcOf(MY)}</div>`;pass()})};
+const P46=(el,pass)=>{ensureMY();el.innerHTML=`<div class="q">🎉 내가 짠 알고리즘을 세 가지 방법으로 모두 나타냈어요! 같은 알고리즘이 표현만 다른 걸 확인해 보세요.</div><div class="grid"><div class="box"><h3>① 자연어</h3>${nl(MY)}</div><div class="box"><h3>② 의사코드</h3>${pcOf(MY,'쓰레기 분리배출하기')}</div><div class="box"><h3>③ 순서도</h3>${fcOf(MY)}</div></div>`;pass()};
+
+/* ===== 틀 ===== */
+const NM=['① 자연어','② 의사코드','③ 순서도','④ 스스로 해보기'],PNS=[['문제 상태 정의','이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['함께 해보기','알고리즘 짜기','자연어로','의사코드로','순서도로','완성']];
+const S=[[P10,P11,P12,P13],[P21,P22,P23],[P31,P32,P33],[P41,P42,P43,P44,P45,P46]];
+let st=0,pg=0;const dn={},sk={},wr={},ST={},K=()=>st+'-'+pg;let showSkip=()=>{};function markFail(){const k=K();delete dn[k];wr[k]=1;nav();showSkip()}
+const ok=s=>S[s].every((_,p)=>dn[s+'-'+p]);
+const dd=(s,p)=>dn[s+'-'+p]||sk[s+'-'+p];
+const open=(s,p)=>{for(let i=0;i<s;i++)for(let j=0;j<S[i].length;j++)if(!dd(i,j))return false;for(let j=0;j<p;j++)if(!dd(s,j))return false;return true};
+function board(){let n=0,k=0,w=0,tot=0;
+ $('#bg').innerHTML=S.map((pp,s)=>`<div class="br"><span class="bn">${NM[s]}</span>${pp.map((_,p)=>{tot++;const y=s+'-'+p,d=dn[y],b=!d&&wr[y],x=!d&&!b&&sk[y];if(d)n++;if(b)w++;if(x)k++;return `<span class="c ${d?'ok':b?'bad':x?'sk':''} ${s===st&&p===pg?'cur':''}">${d?'✅':b?'❌':x?'⏭':'⬜'} ${PNS[s][p]}</span>`}).join('')}</div>`).join('');
+ $('#bs').innerHTML=n===tot?'🎉 모두 통과!':`통과 ${n}/${tot}${w?` · 틀림 ${w}`:''}${k?` · 건너뜀 ${k}`:''}`}
+function nav(){board();$('#tabs').innerHTML=NM.map((n,i)=>`<button class="tab ${i===st?'on':''} ${ok(i)?'done':''}" data-s="${i}" ${open(i,0)?'':'disabled'}>${open(i,0)?'':'🔒 '}${n}</button>`).join('');
+ $('#pn').innerHTML=S[st].length>1?S[st].map((_,p)=>`<button class="${p===pg?'on':''}" data-p="${p}" ${open(st,p)?'':'disabled'}>${open(st,p)?'':'🔒 '}${p+1}. ${PNS[st][p]}${dn[st+'-'+p]?' ✅':''}</button>`).join(''):''}
+function show(){$('#main').innerHTML='<div class="mini" id="pn"></div><div id="pg"></div><div id="nxt"></div>';
+ $('#pn').onclick=e=>{const b=e.target.closest('[data-p]');if(b){pg=+b.dataset.p;show()}};
+ nav();
+ const go=()=>{if(pg<S[st].length-1)pg++;else if(st<S.length-1){st++;pg=0}else return nav();show();scrollTo(0,0)};const key=st+'-'+pg;
+ const skb=()=>{$('#nxt').innerHTML='<button class="btn ghost">건너뛰기 ⏭</button>';$('#nxt button').onclick=()=>{if(!dn[key])sk[key]=1;nav();go()}};showSkip=skb;skb();
+ const fin=()=>{dn[key]=1;delete sk[key];delete wr[key];nav();const end=st===3&&pg===S[3].length-1;
+  $('#nxt').innerHTML=end?'<div class="fb"><div class="ok">🎉 마지막 단계까지 마쳤어요! 위 상황판에서 건너뛴(⏭) 단계가 없는지 확인해요.</div></div>':'<button class="btn">다음 ▶</button>';
+  const nb=$('#nxt button');if(nb)nb.onclick=go};
+ S[st][pg]($('#pg'),fin);if(dn[st+'-'+pg])fin()}
+$('#tabs').onclick=e=>{const b=e.target.closest('[data-s]');if(b){st=+b.dataset.s;pg=0;show()}};
+show();
+</script>
+</body>
+</html>
