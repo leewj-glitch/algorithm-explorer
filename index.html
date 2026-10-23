@@ -61,9 +61,10 @@ ol.ans li button{border:0;background:var(--soft);color:var(--ink);border-radius:
 <body>
 <div class="wrap">
 <h1>🧩 알고리즘 탐험대</h1>
-<div class="bd2" id="board"><div class="bh"><b>📋 진행 상황판</b><input id="nm" placeholder="이름" aria-label="이름"><span class="bs" id="bs"></span><button class="rsb" id="rsall">↺ 처음부터</button></div><div id="bg"></div><div class="hint" style="margin-top:6px;font-size:13px">✅ 정답 · ❌ 틀린 채로 확인함 · ⬜ 아직 안 함</div></div>
+<div class="bd2" id="board"><div class="bh"><b>📋 진행 상황판</b><input id="nm" placeholder="이름" aria-label="이름"><span class="bs" id="bs"></span><button class="rsb" id="rsall">↺ 처음부터</button></div><div class="bdg" id="bdg"></div><div id="bg"></div><div class="hint" style="margin-top:6px;font-size:13px">✅ 정답 · ❌ 틀린 채로 확인함 · ⬜ 아직 안 함</div></div>
 <div class="tabs" id="tabs"></div>
 <div class="panel" id="main"></div>
+<div id="toast" role="status" aria-live="polite"></div><div class="qm" id="qm" hidden></div>
 </div>
 <style>.shp{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}.shp>div{border:2px solid var(--line);border-radius:12px;padding:8px;text-align:center;font-size:14px;line-height:1.4}.shp svg{width:100%;max-width:130px;height:auto}.nl .nl{font-size:15px}.f{margin-top:8px}.tab:disabled,.mini button:disabled{opacity:.45;cursor:not-allowed}.bd2{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:12px}.bh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.bh input{font:inherit;font-size:15px;padding:3px 8px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:110px}.bh .bs{margin-left:auto;font-weight:700;font-size:15px}.br{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}.bn{font-size:13px;font-weight:700;min-width:84px}.c{font-size:12px;border-radius:8px;padding:2px 7px;border:1.5px solid var(--line);background:var(--bg);color:var(--sub)}.c.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}.c.sk{background:#fff3cd;border-color:#d9a400;color:#8a6500}.c.bad{background:var(--nobg);border-color:var(--no);color:var(--no)}.c.cur{outline:2px solid var(--pri)}@media (prefers-color-scheme:dark){.c.sk{background:#4a3d10;color:#ffd666}}
 body{font-size:21px;line-height:1.65}.wrap{max-width:1000px;padding:20px}h1{font-size:32px}h2{font-size:26px}
@@ -82,6 +83,16 @@ pre.code{font-size:20px;padding:14px}.box{padding:16px}.box h3{font-size:21px}.b
 .split .side{position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;border:2px solid var(--line);border-radius:16px;padding:12px;background:var(--card)}
 .split .side .box{border:0;padding:0}.split .side .lbl{margin-top:0}.split .side svg{max-width:100%}
 .split ol.ans li button{width:44px;height:44px}
+.bn{min-width:150px}
+.pot{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.pot svg{flex:0 0 240px;width:240px;max-width:240px;margin:0}.pot ol{flex:1 1 240px;margin:0;padding:0;list-style:none;font-size:19px;line-height:1.5}.pot li{margin:7px 0}.pot li b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--pri);color:var(--pri-ink);font-size:16px;margin-right:9px;vertical-align:middle}
+.qh{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--soft);border-radius:14px;padding:10px 16px;margin-bottom:10px}.qh b{font-size:21px}.qh .pb{flex:1 1 140px;height:14px;background:var(--bg);border-radius:8px;overflow:hidden;border:2px solid var(--line)}.qh .pb i{display:block;height:100%;background:var(--ok);transition:width .5s}
+.bdg{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}.bdg .m{font-size:15px;border-radius:20px;padding:4px 12px;border:2px solid var(--line);opacity:.4;filter:grayscale(1);background:var(--bg)}.bdg .m.on{opacity:1;filter:none;border-color:var(--ok);background:var(--okbg);font-weight:700}.bdg .xp{margin-left:auto;font-weight:700;font-size:16px}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,40px);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:30px;font-size:20px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s;z-index:50;max-width:92vw;text-align:center}#toast.on{opacity:1;transform:translate(-50%,0)}
+.qm{position:fixed;inset:0;background:rgba(20,20,40,.6);display:grid;place-items:center;z-index:60;padding:16px;overflow:hidden}.qm[hidden]{display:none}
+.qc{background:var(--card);border:4px solid var(--pri);border-radius:28px;padding:28px 32px;max-width:480px;text-align:center;position:relative;z-index:2;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}.qc .big{font-size:84px;line-height:1.1}.qc h2{font-size:34px;margin:6px 0}.qc p{margin:8px 0}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.cf{position:absolute;top:-40px;font-size:30px;animation:fall linear forwards;z-index:1}@keyframes fall{to{transform:translateY(115vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.cf{display:none}.qc{animation:none}}
 @media (max-width:900px){.split{grid-template-columns:1fr}.split .side{position:static;max-height:none}}
 </style>
 <script>
@@ -92,7 +103,8 @@ const txt=(L,x,y,h)=>L.map((l,i)=>`<text x="${x}" y="${y+h/2-(L.length-1)*8+i*16
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const fb=l=>{if(l.some(x=>!x[0]))markFail();return '<div class="fb">'+l.map(([o,m])=>`<div class="${o?'ok':'no'}">${o?'✅':'🤔'} ${m}</div>`).join('')+'</div>'};
 
-const POT=`<div class="box" style="max-width:400px;margin:0 auto 10px"><h3>완성된 반자동 급수 화분 (교과서 93쪽 순서)</h3><svg viewBox='0 0 380 300' role='img' aria-label='반자동 급수 화분 완성 그림'><rect x='120' y='200' width='120' height='82' rx='8' fill='none' stroke='#8a8a99' stroke-width='2.5'/><rect x='122' y='228' width='116' height='52' rx='6' fill='#bfe3ff'/><polygon points='125,105 235,105 197,176 163,176' fill='none' stroke='#8a8a99' stroke-width='2.5'/><polygon points='128,118 232,118 196,172 164,172' fill='#8b5e3c'/><rect x='168' y='176' width='24' height='40' fill='none' stroke='#8a8a99' stroke-width='2.5'/><rect x='161' y='172' width='38' height='8' rx='2' fill='#4aa3df'/><rect x='170' y='180' width='7' height='68' fill='#f0a830'/><rect x='183' y='180' width='7' height='62' fill='#e8962a'/><path d='M180 118V62' stroke='#3b9b4a' stroke-width='4'/><ellipse cx='158' cy='72' rx='20' ry='9' transform='rotate(-30 158 72)' fill='#4cb85c'/><ellipse cx='203' cy='68' rx='20' ry='9' transform='rotate(30 203 68)' fill='#4cb85c'/><ellipse cx='180' cy='52' rx='9' ry='18' fill='#5ccb6c'/><path class='ln' stroke-dasharray='3 3' d='M70 72H150M82 130H135M96 200H166M246 206H240M246 258H238M246 128H244V232H240'/><text class='ts' x='6' y='62'>④ 식물을</text><text class='ts' x='6' y='78'>옮겨 심기</text><text class='ts' x='6' y='122'>③ 배양토를</text><text class='ts' x='6' y='138'>채우기</text><text class='ts' x='6' y='192'>② 천을 끼워</text><text class='ts' x='6' y='208'>입구에 꽂기</text><text class='ts' x='250' y='196'>① 페트병을</text><text class='ts' x='250' y='212'>반으로 자르기</text><text class='ts' x='250' y='250'>⑤ 아래쪽에 물을</text><text class='ts' x='250' y='266'>채우고 올려놓기</text><text class='ts' x='250' y='120'>⑥ 물의 양을</text><text class='ts' x='250' y='136'>주기적으로 확인</text><text class='ts' x='250' y='156'>⑦ 부족하면</text><text class='ts' x='250' y='172'>물 보충하기</text></svg></div>`;
+const BD=[[1,204,204],[2,152,196],[3,120,142],[4,172,50],[5,90,262],[6,34,240],[7,206,240]].map(([n,x,y])=>`<circle cx='${x}' cy='${y}' r='12' fill='#4f6df5'/><text x='${x}' y='${y+5}' style='fill:#fff;font-size:14px;font-weight:700'>${n}</text>`).join('');
+const POT=`<div class="box" style="margin:0 auto 10px"><h3>완성된 반자동 급수 화분 (교과서 93쪽)</h3><div class="pot"><svg viewBox='0 0 240 300' role='img' aria-label='반자동 급수 화분 완성 그림'><rect x='60' y='200' width='120' height='82' rx='8' fill='none' stroke='#8a8a99' stroke-width='2.5'/><rect x='62' y='228' width='116' height='52' rx='6' fill='#bfe3ff'/><polygon points='65,105 175,105 137,176 103,176' fill='none' stroke='#8a8a99' stroke-width='2.5'/><polygon points='68,118 172,118 136,172 104,172' fill='#8b5e3c'/><rect x='108' y='176' width='24' height='40' fill='none' stroke='#8a8a99' stroke-width='2.5'/><rect x='101' y='172' width='38' height='8' rx='2' fill='#4aa3df'/><rect x='110' y='180' width='7' height='68' fill='#f0a830'/><rect x='123' y='180' width='7' height='62' fill='#e8962a'/><path d='M120 118V62' stroke='#3b9b4a' stroke-width='4'/><ellipse cx='98' cy='72' rx='20' ry='9' transform='rotate(-30 98 72)' fill='#4cb85c'/><ellipse cx='143' cy='68' rx='20' ry='9' transform='rotate(30 143 68)' fill='#4cb85c'/><ellipse cx='120' cy='52' rx='9' ry='18' fill='#5ccb6c'/><path stroke='#8a8a99' stroke-width='1.5' stroke-dasharray='3 3' d='M181 204L192 204M133 196L140 196M60 240L46 240M180 240L194 240'/>${BD}</svg><ol><li><b>1</b>페트병을 반으로 자르기</li><li><b>2</b>심지 역할을 할 천을 길게 잘라 입구에 끼우기</li><li><b>3</b>위쪽 페트병에 배양토 채우기</li><li><b>4</b>식물을 옮겨 심기</li><li><b>5</b>아래쪽 페트병에 물을 채우고 위쪽을 올려놓기</li><li><b>6</b>주기적으로 물의 양 확인하기</li><li><b>7</b>물이 부족하면 물 보충하기</li></ol></div></div>`;
 const rd=(el,pass)=>{el.insertAdjacentHTML('beforeend','<button class="btn" id="rd">다 읽었어요 ✔</button>');el.querySelector('#rd').onclick=pass};
 /* ===== 알고리즘 표현 변환: 노드 → 자연어 / 의사코드 / 순서도 ===== */
 // s: 처리 {x,f} / l: 반복 {x,b} / i: 선택 {q,c,y,n}
@@ -215,22 +227,22 @@ const P41=(el,pass)=>{el.innerHTML='<div class="q">📌 <b>스스로 해보기</
 
 const CLEAN=[{t:'w',x:'교실에 쓰레기가 있는 동안 반복하기',q:'교실에 쓰레기가 있는가?',b:[SN('쓰레기를 줍는다'),SN('쓰레기통 앞으로 걸어간다'),{t:'i',q:'재활용할 수 있는가?',c:'재활용할 수 있으면',y:[SN('재활용 통에 넣는다')],n:[SN('일반 쓰레기통에 넣는다')]}]},SN('화장실에 간다'),SN('수도꼭지를 튼다'),SN('비누로 손을 씻는다')];
 let MY=CLEAN;
-const B5=[{id:'w',label:'🔁 교실에 쓰레기가 있는가? (판단)'},{id:'a',label:'쓰레기를 줍는다'},{id:'o',label:'쓰레기통 앞으로 걸어간다'},{id:'c',label:'🔀 재활용할 수 있는가? (판단)'},{id:'y',label:'재활용 통에 넣는다'},{id:'n',label:'일반 쓰레기통에 넣는다'},{id:'h1',label:'화장실에 간다'},{id:'h2',label:'수도꼭지를 튼다'},{id:'h3',label:'비누로 손을 씻는다'},{id:'x1',label:'쓰레기를 창밖으로 던진다'},{id:'x2',label:'쓰레기를 바닥에 두고 간다'}];
+const B5=[{id:'w',label:'🔁 교실에 쓰레기가 있는가? 예→쓰레기를 치우고 다시 판단 / 아니오→반복 끝'},{id:'a',label:'쓰레기를 줍는다'},{id:'o',label:'쓰레기통 앞으로 걸어간다'},{id:'c',label:'🔀 재활용할 수 있는가? 예→재활용 통에 넣는다 / 아니오→일반 쓰레기통에 넣는다'},{id:'h1',label:'화장실에 간다'},{id:'h2',label:'수도꼭지를 튼다'},{id:'h3',label:'비누로 손을 씻는다'},{id:'x1',label:'쓰레기를 창밖으로 던진다'},{id:'x2',label:'쓰레기를 바닥에 두고 간다'}];
 const flat=ns=>{let n=0;const r=[],m=(k,x,d,q,l)=>r.push({id:'p'+n++,k,x,q,d,label:l||x}),go=(ns,d)=>ns.forEach(x=>{if(x.t==='s')m('s',x.x,d);else if(x.t==='w'){m('w',x.x,d,x.q,'🔁 '+x.x);go(x.b,d+1)}else{m('i',x.c,d,x.q,'🔀 '+x.c);go(x.y,d+1);if(x.n){m('e','그렇지 않으면',d,0,'↔ 그렇지 않으면');go(x.n,d+1)}}});go(ns,0);return r};
-const P42=(el,pass)=>{el.innerHTML=`<div class="q">📌 <b>문제 상태 정의</b> “교실 청소하기”<br>• 현재 상태: 교실 여기저기에 쓰레기가 떨어져 있어요.<br>• 목표 상태: 쓰레기를 모두 알맞게 버리고, 화장실에서 손을 씻어 깨끗해요.<br>💡 쓰레기가 하나만 있을까요? 여러 개일 수 있어요. 그래서 <b>“교실에 쓰레기가 있는가?”를 판단</b>해서 있으면 줍고 버린 뒤 <b>다시 돌아가 판단</b>해요. 교과서의 “물 관리하기”처럼 <b>반복</b>이에요.<br>필요한 카드를 <b>생각하는 순서대로</b> 놓아 보세요. 바르지 못한 행동 카드는 쓰면 안 돼요!</div><div id="bd"></div><button class="btn" id="ck">검사하기</button><button class="btn ghost" id="rs">처음부터</button><div id="fb"></div>`;
+const P42=(el,pass)=>{el.innerHTML=`<div class="q">📌 <b>문제 상태 정의</b> “교실 청소하기”<br>• 현재 상태: 교실 여기저기에 쓰레기가 떨어져 있어요.<br>• 목표 상태: 쓰레기를 모두 알맞게 버리고, 화장실에서 손을 씻어 깨끗해요.<br>💡 쓰레기가 하나만 있을까요? 여러 개일 수 있어요. 그래서 <b>“교실에 쓰레기가 있는가?”를 판단</b>해서 있으면 줍고 버린 뒤 <b>다시 돌아가 판단</b>해요. 교과서의 “물 관리하기”처럼 <b>반복</b>이에요.<br>🔀🔁 <b>판단 카드 한 장</b>에는 “예일 때”와 “아니오일 때”가 함께 들어 있어요. 둘 중 하나만 실행해요.<br>필요한 카드를 <b>생각하는 순서대로</b> 놓아 보세요. 바르지 못한 행동 카드는 쓰면 안 돼요!</div><div id="bd"></div><button class="btn" id="ck">검사하기</button><button class="btn ghost" id="rs">처음부터</button><div id="fb"></div>`;
  const q=s=>el.querySelector(s),bd=builder(q('#bd'),shk(K(),B5),0,()=>{q('#fb').innerHTML=''},K());
  q('#rs').onclick=()=>bd.reset();
- q('#ck').onclick=()=>{const ids=bd.get().map(x=>x.id),p=k=>ids.indexOf(k),r=[],N={w:'쓰레기가 있는지 판단하는 일(🔁)',a:'쓰레기를 줍는 일',o:'쓰레기통 앞으로 걸어가는 일',c:'재활용인지 판단하는 일(🔀)',y:'재활용 통에 넣는 일',n:'일반 쓰레기통에 넣는 일',h1:'화장실에 가는 일',h2:'수도꼭지를 트는 일',h3:'비누로 손을 씻는 일'};
+ q('#ck').onclick=()=>{const ids=bd.get().map(x=>x.id),p=k=>ids.indexOf(k),r=[],N={w:'쓰레기가 있는지 판단하는 일(🔁)',a:'쓰레기를 줍는 일',o:'쓰레기통 앞으로 걸어가는 일',c:'재활용인지 판단하고 버리는 일(🔀)',h1:'화장실에 가는 일',h2:'수도꼭지를 트는 일',h3:'비누로 손을 씻는 일'};
   Object.keys(N).forEach(k=>r.push([ids.includes(k),ids.includes(k)?`${N[k]} 카드를 골랐어요.`:`꼭 필요한 카드가 빠졌어요: ${N[k]}`]));
   const bad=ids.some(i=>i[0]==='x');r.push([!bad,bad?'바르지 못한 행동 카드가 있어요. 빼 주세요.':'올바른 행동만 골랐어요.']);
   const ord=(x,y,o,n)=>{if(p(x)>=0&&p(y)>=0)r.push([p(x)<p(y),p(x)<p(y)?o:n])};
   ord('w','a','먼저 쓰레기가 있는지 판단했어요.','먼저 “교실에 쓰레기가 있는가?”를 판단해야 해요.');
   ord('a','o','줍고 나서 쓰레기통 앞으로 갔어요.','먼저 쓰레기를 주워야 쓰레기통으로 갈 수 있어요.');
   ord('o','c','쓰레기통 앞에서 판단했어요.','쓰레기통 앞에 가서 재활용인지 판단해요.');
-  ord('c','y','재활용 판단 뒤에 재활용 통에 넣어요.','재활용인지 판단한 뒤에 버려요.');
-  ord('c','n','재활용 판단 뒤에 일반 쓰레기통에 넣어요.','재활용인지 판단한 뒤에 버려요.');
-  ord('y','h1','쓰레기를 모두 버린 뒤 화장실에 가요.','쓰레기를 다 치운 뒤에 화장실에 가요.');
-  ord('n','h1','쓰레기를 모두 버린 뒤 화장실에 가요.','쓰레기를 다 치운 뒤에 화장실에 가요.');
+  ord('c','h1','쓰레기를 모두 버린 뒤 화장실에 가요.','쓰레기를 다 치운 뒤에 화장실에 가요.');
+  
+  
+  
   ord('h1','h2','화장실에 간 뒤 수도꼭지를 틀었어요.','화장실에 가야 수도꼭지를 틀 수 있어요.');
   ord('h2','h3','수도꼭지를 튼 뒤 손을 씻었어요.','물이 나와야 비누로 손을 씻을 수 있어요.');
   q('#fb').innerHTML=fb(r);
@@ -251,26 +263,37 @@ const P45=(el,pass)=>{const qs=[{t:'‘시작’과 ‘끝’은 ',o:SHP,a:SHP[0
 const P46=(el,pass)=>{el.innerHTML=`<div class="q">🎉 내가 짠 “교실 청소하기” 알고리즘을 세 가지 방법으로 모두 나타냈어요! 같은 알고리즘이 표현만 다른 걸 확인해 보세요.</div><div class="grid"><div class="box"><h3>① 자연어</h3>${nl(MY)}</div><div class="box"><h3>② 의사코드</h3>${pcOf(MY,'교실 청소하기')}</div><div class="box"><h3>③ 순서도</h3>${fcOf(MY)}</div></div>`;if([1,2,3,4].every(j=>dn['3-'+j]))pass();else el.insertAdjacentHTML('beforeend','<div class="fb"><div class="no">🤔 앞의 네 단계(알고리즘 짜기 ~ 순서도로)를 모두 통과하면 이 단계도 ✅가 돼요.</div></div>')};
 
 /* ===== 틀 ===== *//* ===== 틀 ===== */
-const NM=['① 자연어','② 의사코드','③ 순서도','④ 스스로 해보기'],PNS=[['문제 상태 정의','이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['함께 해보기','알고리즘 짜기','자연어로','의사코드로','순서도로','완성']];
+const NM=['🪴 ① 자연어','📜 ② 의사코드','🗺️ ③ 순서도','🧹 ④ 스스로 해보기'],PNS=[['문제 상태 정의','이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['이해하기','빈칸 채우기','직접 해보기'],['함께 해보기','알고리즘 짜기','자연어로','의사코드로','순서도로','완성']];
 const S=[[P10,P11,P12,P13],[P21,P22,P23],[P31,P32,P33],[P41,P42,P43,P44,P45,P46]];
-let st=0,pg=0;const dn={},sk={},wr={},ST={},K=()=>st+'-'+pg;const SKEY='algo-explorer-v1';
-function save(){try{localStorage.setItem(SKEY,JSON.stringify({dn,sk,wr,ST,st,pg,nm:$('#nm').value}))}catch(e){}}
-function load(){try{const j=JSON.parse(localStorage.getItem(SKEY)||'null');if(!j)return;[['dn',dn],['sk',sk],['wr',wr],['ST',ST]].forEach(([k,o])=>Object.assign(o,j[k]||{}));if(j.nm)$('#nm').value=j.nm;if(Number.isInteger(j.st)&&S[j.st]&&Number.isInteger(j.pg)&&S[j.st][j.pg]&&open(j.st,j.pg)){st=j.st;pg=j.pg}}catch(e){}}
-let showSkip=()=>{};function markFail(){const k=K();delete dn[k];wr[k]=1;nav();showSkip()}
+let st=0,pg=0;const dn={},sk={},wr={},ST={},att={},star={},qd={},K=()=>st+'-'+pg;const SKEY='algo-explorer-v1';
+function save(){try{localStorage.setItem(SKEY,JSON.stringify({dn,sk,wr,ST,att,star,qd,st,pg,nm:$('#nm').value}))}catch(e){}}
+function load(){try{const j=JSON.parse(localStorage.getItem(SKEY)||'null');if(!j)return;[['dn',dn],['sk',sk],['wr',wr],['ST',ST],['att',att],['star',star],['qd',qd]].forEach(([k,o])=>Object.assign(o,j[k]||{}));Object.keys(dn).forEach(k=>{if(!star[k])star[k]=2});S.forEach((_,i)=>{if(ok(i))qd[i]=1});if(j.nm)$('#nm').value=j.nm;if(Number.isInteger(j.st)&&S[j.st]&&Number.isInteger(j.pg)&&S[j.st][j.pg]&&open(j.st,j.pg)){st=j.st;pg=j.pg}}catch(e){}}
+let showSkip=()=>{};function markFail(){const k=K();delete dn[k];wr[k]=1;att[k]=(att[k]||0)+1;nav();showSkip();toast('아쉬워요! 힌트를 읽고 다시 도전해 봐요 💪')}
 const ok=s=>S[s].every((_,p)=>dn[s+'-'+p]);
 const dd=(s,p)=>dn[s+'-'+p]||sk[s+'-'+p];
 const open=()=>true;
-function board(){let n=0,k=0,w=0,tot=0;
+const QN=[{e:'🪴',n:'화분 마법사',d:'자연어로 알고리즘 쓰기'},{e:'📜',n:'코드 해독가',d:'의사코드 읽고 쓰기'},{e:'🗺️',n:'길 안내 탐험가',d:'순서도 그리기'},{e:'🧹',n:'교실 청소 대장',d:'내 알고리즘 만들기'}];
+const stars=s=>S[s].reduce((a,_,p)=>a+(star[s+'-'+p]||0),0),totS=()=>S.reduce((a,_,s)=>a+stars(s),0),maxS=()=>S.reduce((a,pp)=>a+pp.length*3,0);
+const lvl=t=>t>=44?'👑 알고리즘 박사':t>=30?'🚀 알고리즘 대장':t>=15?'🧭 탐험가':t>=5?'🐣 견습 탐험가':'🥚 탐험 새싹';
+let tt=0;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2300)}
+function quest(s){const all=S.every((_,i)=>qd[i]),q=QN[s],m=$('#qm'),nx=S.findIndex((_,i)=>!qd[i]);
+ m.innerHTML=`<div class="qc"><div class="big">${all?'🏆':q.e}</div><h2>${all?'모든 퀘스트 완료!':'퀘스트 완료!'}</h2><p><b>${q.e} 퀘스트 ${s+1}: ${q.n}</b><br>${all?'알고리즘 탐험을 모두 마쳤어요!':'“'+q.d+'” 배지를 얻었어요!'}</p><p>⭐ 이 퀘스트 ${stars(s)} / ${S[s].length*3} · 전체 ${totS()} / ${maxS()}<br><b>${lvl(totS())}</b></p>${nx>=0?'<button class="btn" id="qn">다음 퀘스트로 ▶</button>':''}<button class="btn ghost" id="qx">닫기</button></div>`+Array.from({length:26},()=>`<span class="cf" style="left:${Math.random()*100}%;animation-duration:${2.2+Math.random()*2.4}s;animation-delay:${Math.random()*.9}s">${['🎉','⭐','✨','🎊','🌟'][Math.floor(Math.random()*5)]}</span>`).join('');
+ m.hidden=false;const x=()=>{m.hidden=true};$('#qx').onclick=x;const n=$('#qn');if(n)n.onclick=()=>{x();st=nx;pg=0;show();scrollTo(0,0)}}
+function board(){$('#bdg').innerHTML=QN.map((q,i)=>`<span class="m ${qd[i]?'on':''}">${q.e} ${q.n}</span>`).join('')+`<span class="xp">⭐ ${totS()} / ${maxS()} · ${lvl(totS())}</span>`;
+ const qh=$('#qh');if(qh){const q=QN[st],c=S[st].filter((_,p)=>dn[st+'-'+p]).length;qh.innerHTML=`<b>${q.e} 퀘스트 ${st+1}: ${q.n}</b><span class="hint">${q.d}</span><span class="pb"><i style="width:${c/S[st].length*100}%"></i></span><b>${c}/${S[st].length}</b>${qd[st]?'<span>✅ 완료!</span>':''}`}
+ let n=0,k=0,w=0,tot=0;
  $('#bg').innerHTML=S.map((pp,s)=>`<div class="br"><span class="bn">${NM[s]}</span>${pp.map((_,p)=>{tot++;const y=s+'-'+p,d=dn[y],b=!d&&wr[y],x=0;if(d)n++;if(b)w++;if(x)k++;return `<span class="c ${d?'ok':b?'bad':x?'sk':''} ${s===st&&p===pg?'cur':''}">${d?'✅':b?'❌':x?'⏭':'⬜'} ${PNS[s][p]}</span>`}).join('')}</div>`).join('');
  $('#bs').innerHTML=n===tot?'🎉 모두 통과!':`통과 ${n}/${tot}${w?` · 틀림 ${w}`:''}${k?` · 건너뜀 ${k}`:''}`}
 function nav(){board();save();$('#tabs').innerHTML=NM.map((n,i)=>`<button class="tab ${i===st?'on':''} ${ok(i)?'done':''}" data-s="${i}" ${open(i,0)?'':'disabled'}>${open(i,0)?'':'🔒 '}${n}</button>`).join('');
  $('#pn').innerHTML=S[st].length>1?S[st].map((_,p)=>`<button class="${p===pg?'on':''}" data-p="${p}" ${open(st,p)?'':'disabled'}>${open(st,p)?'':'🔒 '}${p+1}. ${PNS[st][p]}${dn[st+'-'+p]?' ✅':''}</button>`).join(''):''}
-function show(){$('#main').innerHTML='<div class="mini" id="pn"></div><div id="pg"></div><div id="nxt"></div>';
+function show(){$('#main').innerHTML='<div class="qh" id="qh"></div><div class="mini" id="pn"></div><div id="pg"></div><div id="nxt"></div>';
  $('#pn').onclick=e=>{const b=e.target.closest('[data-p]');if(b){pg=+b.dataset.p;show()}};
  nav();
  const go=()=>{if(pg<S[st].length-1)pg++;else if(st<S.length-1){st++;pg=0}else return nav();show();scrollTo(0,0)};const key=st+'-'+pg;
  const skb=()=>{$('#nxt').innerHTML=''};showSkip=skb;skb();
- const fin=()=>{dn[key]=1;delete sk[key];delete wr[key];nav();const end=st===3&&pg===S[3].length-1;
+ const fin=()=>{const first=!dn[key];dn[key]=1;delete sk[key];delete wr[key];let gain=0;if(first&&!star[key])gain=star[key]=Math.max(1,3-Math.min(2,att[key]||0));nav();
+ if(first){if(gain)toast(`정답! ⭐ ${gain}개 획득`+(gain===3?' (한 번에 성공! 👏)':''));if(ok(st)&&!qd[st]){qd[st]=1;nav();setTimeout(()=>quest(st),700)}}
+ const end=st===3&&pg===S[3].length-1;
   $('#nxt').innerHTML=end?'<div class="fb"><div class="ok">🎉 마지막 단계까지 마쳤어요! 위 상황판에서 ⬜(안 한 단계)나 ❌(틀린 단계)가 없는지 확인해요.</div></div>':'<button class="btn">다음 ▶</button>';
   const nb=$('#nxt button');if(nb)nb.onclick=go};
  S[st][pg]($('#pg'),fin);if(dn[st+'-'+pg])fin()}
